@@ -1,0 +1,20 @@
+{% load static %}<!doctype html><html lang="bg"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{% block title %}Пространството ПФ+{% endblock %}</title><link rel="stylesheet" href="{% static 'ledger/app.css' %}"></head>
+<body><aside class="sidebar"><a class="brand" href="/">ПФ<span>+</span><small>ПРОСТРАНСТВОТО</small></a><div class="nav-label">УПРАВЛЕНИЕ НА ЦЕНТЪРА</div><nav>
+<a href="/" class="{% if request.path == '/' %}active{% endif %}"><span>◫</span> Финансово табло</a>
+<a href="{% url 'courses' %}" class="{% if '/courses/' in request.path %}active{% endif %}"><span>▤</span> Курсове</a>
+<a href="{% url 'register' 'participants' %}"><span>♧</span> Участници</a>
+<a href="{% url 'register' 'payments' %}"><span>↙</span> Постъпления</a>
+<a href="{% url 'register' 'expenses' %}"><span>↗</span> Разходи и бюджети</a>
+<a href="{% url 'register' 'transfers' %}"><span>⇄</span> Реални преводи</a>
+<a href="{% url 'register' 'periods' %}"><span>▦</span> Месечно приключване</a>
+<a href="{% url 'register' 'documents' %}"><span>▱</span> Документи</a>
+<a href="{% url 'register' 'discrepancies' %}"><span>!</span> Несъответствия</a>
+<a href="{% url 'analytics' %}"><span>▥</span> Аналитика</a>
+<a href="{% url 'integration' %}"><span>◎</span> Google Forms</a>
+{% if user.is_superuser %}<div class="nav-label">АДМИНИСТРАЦИЯ</div><a href="/admin/">⚙ &nbsp; Правила и настройки</a><a href="{% url 'register' 'audit' %}">◷ &nbsp; История на промените</a>{% endif %}
+</nav><div class="sidebar-bottom"><div class="avatar">{{ user.username|first|upper }}</div><div><strong>{{ user.username }}</strong><small>{% if user.is_superuser %}Администратор{% else %}{{ user.groups.first.name|default:'Само преглед' }}{% endif %}</small></div><form action="{% url 'logout' %}" method="post">{% csrf_token %}<button class="logout" title="Изход">↪</button></form></div></aside>
+<main><header class="topbar"><div>Педагогически факултет <span>/</span> <strong>Пространството ПФ+</strong></div><a href="{% url 'password' %}" class="muted">Моят профил</a></header><div class="content">
+{% for message in messages %}<div role="status" class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+{% block content %}{% endblock %}
+<footer>Пловдивски университет „Паисий Хилендарски“ · Център за приложни изследвания и учене през целия живот<br>Вътрешна административна система. Официалното счетоводно отчитане и утвърждаване се извършват по университетския ред.</footer>
+</div></main></body></html>

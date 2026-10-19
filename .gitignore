@@ -1,0 +1,15 @@
+.venv/
+.env
+runtime/
+staticfiles/
+__pycache__/
+*.pyc
+.pytest_cache/
+*.sqlite3
+*.log
+# Private university source documents and reports stay outside the public repository.
+data/originals/
+data/extracted/
+docs/HISTORICAL_ANALYSIS.md
+docs/samples/
+*.zip

@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:17-bookworm
+    environment:
+      POSTGRES_DB: pfplus
+      POSTGRES_USER: pfplus
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run scripts/init_local.py first}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ./runtime/pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pfplus -d pfplus"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+  web:
+    build: .
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://pfplus:${POSTGRES_PASSWORD}@db:5432/pfplus
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - ./runtime:/app/runtime
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import http.client,os; c=http.client.HTTPConnection('127.0.0.1',8000,timeout=5); c.request('GET','/login/',headers={'Host':os.environ.get('ALLOWED_HOSTS','localhost').split(',')[0]}); assert c.getresponse().status in (200,302)"]
+      interval: 15s
+      timeout: 6s
+      start_period: 30s
+      retries: 5
+    restart: unless-stopped
